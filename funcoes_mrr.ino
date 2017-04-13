@@ -103,6 +103,9 @@ void SensorExecute()
 
     digitalWrite(LedGreen[Position - n_sensor ], LOW);
     digitalWrite(LedRed[Position - n_sensor ], HIGH);
+    
+    digitalWrite(LedGreen[Position - n_sensor + 1 ], HIGH);
+    digitalWrite(LedRed[Position - n_sensor + 1 ], LOW);
 
   }
 
