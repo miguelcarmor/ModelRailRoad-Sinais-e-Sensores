@@ -59,11 +59,19 @@ void setup() {
 void loop() {
 
   // Ler o estado dos sensores
-  for (i = 0; i < 5; i++) {
+  for (i = 0; i < n_sensor; i++) {
     HallPinStatus [i] = digitalRead(HallPin[i]);
     //SensorStatus(); //Se quiser visualizar o estado dos sensores em todos os ciclos apague "//" no inicio desta linha
   }
-
+  
+  for(i=0;i<n_sensor;i++) {
+      if (HallPinStatus[i] == LOW) {
+    SensorExecute();
+    Position = i+1;
+  }
+  }
+  
+  //apagar este codigo e experimentar o for loop
   // O que fazer quando o sensor 1 está Ligado
   if (HallPinStatus[0] == LOW) {
     SensorExecute();
