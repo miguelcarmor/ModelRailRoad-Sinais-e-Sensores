@@ -1,30 +1,32 @@
 
 /* Model Railroad - Hall Effect Position Sensores
- *  
- *  Definição de funções especificas deste sketch
- *  
- * 
- */
+
+    Definição de funções especificas deste sketch
+      - DisplayStatus() Função que envia para o serial monitor a situação das variáveis
+      - SensorStatus() Função que envia para o serial monitor a condição dos sensores
+      - SensorExecute() Função que executa as tarefas de cada um dos sensores
+
+*/
 
 
 // Função que envia para o serial monitor a situação das variáveis
 void DisplayStatus() {
 
-  for (i = 0; i < n_sensor; i++) {
-    Serial.println("");
 
-    Serial.print(" - Actual Position: ");
-    Serial.print(Position);
+  Serial.println("");
 
-    Serial.print(" - Last Position: ");
-    Serial.print(LastPosition);
+  Serial.print(" - Actual Position: ");
+  Serial.print(Position);
 
-    Serial.print(" - Direction: ");
-    Serial.print(Direction);
+  Serial.print(" - Last Position: ");
+  Serial.print(LastPosition);
 
-    Serial.println("");
-    Serial.println("");
-  }
+  Serial.print(" - Direction: ");
+  Serial.print(Direction);
+
+  Serial.println("");
+  Serial.println("");
+
 }
 
 //Função que envia para o serial monitor a condição dos sensores
@@ -74,7 +76,7 @@ void SensorExecute()
 
   }
 
-  else if (Position == n_sensor-1 ) {
+  else if (Position == n_sensor - 1 ) {
 
     digitalWrite(LedGreen[Position - 2], HIGH);
     digitalWrite(LedRed[Position - 2], LOW);
@@ -85,11 +87,11 @@ void SensorExecute()
     digitalWrite(LedGreen[Position], LOW);
     digitalWrite(LedRed[Position], HIGH);
 
-    digitalWrite(LedGreen[Position - n_sensor +1], HIGH);
-    digitalWrite(LedRed[Position - n_sensor +1], LOW);
+    digitalWrite(LedGreen[Position - n_sensor + 1], HIGH);
+    digitalWrite(LedRed[Position - n_sensor + 1], LOW);
 
   }
-  
+
   else if (Position == n_sensor ) {
 
     digitalWrite(LedGreen[Position - 2], HIGH);
@@ -103,9 +105,10 @@ void SensorExecute()
 
     digitalWrite(LedGreen[Position - n_sensor ], LOW);
     digitalWrite(LedRed[Position - n_sensor ], HIGH);
-    
+
     digitalWrite(LedGreen[Position - n_sensor + 1 ], HIGH);
     digitalWrite(LedRed[Position - n_sensor + 1 ], LOW);
+
 
   }
 
