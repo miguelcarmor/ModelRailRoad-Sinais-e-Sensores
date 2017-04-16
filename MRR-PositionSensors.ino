@@ -58,47 +58,53 @@ void setup() {
 }
 
 
-  void loop() {
+void loop() {
 
-    // Ler o estado dos sensores
-    for (i = 0; i < n_sensor; i++) {
-      HallPinStatus [i] = digitalRead(HallPin[i]);
-      //SensorStatus(); //Se quiser visualizar o estado dos sensores em todos os ciclos apague "//" no inicio desta linha
+  // Ler o estado dos sensores
+  for (i = 0; i < n_sensor; i++) {
+    HallPinStatus [i] = digitalRead(HallPin[i]);
+    //SensorStatus(); //Se quiser visualizar o estado dos sensores em todos os ciclos apague "//" no inicio desta linha
+  }
+
+  //Determinar qual o sensor que foi activado e executar a respectiva função.
+  for (i = 0; i < n_sensor; i++) {
+    if (HallPinStatus[i] == LOW) {
+      SensorExecute();
+      Position = i + 1;
     }
+  }
 
-    //Determinar qual o sensor que foi activado e executar a respectiva função.
-    for (i = 0; i < n_sensor; i++) {
-      if (HallPinStatus[i] == LOW) {
-        SensorExecute();
-        Position = i + 1;
-      }
-    }
-
-    //Estabelecer a direcção seguida
-    if (Position < LastPosition) {
-      Direction = 1;
-    }
-    else if (Position > LastPosition) {
-      Direction = 2;
-    }
-    else {
-      Direction = 0;
-    }
+  //Estabelecer a direcção seguida
+  if (Position ==1&&LastPosition==n_sensor) {
+    Direction = 2;
+  }
+  else if (Position ==n_sensor&&LastPosition==1) {
+    Direction = 1;
+  }
+  else if (Position < LastPosition) {
+    Direction = 1;
+  }
+  else if (Position > LastPosition) {
+    Direction = 2;
+  }
+  else {
+    Direction = 0;
+  }
 
 
-    //Estabelecer e manter a ultima posição conhecida
-    if (Position != LastPosition) {
-
-      //Chamar a função que envia para o serial monitor o status das variáveis
-      //O estado das variáveis. Só são enviados para o serial monitor quando existe uma alteração de posição
-      DisplayStatus();
-
-      //Redefinir as variáveis em função das novas alterações
-      LastPosition = Position;
-
-    }
+  //Estabelecer e manter a ultima posição conhecida
+  if (Position != LastPosition) {
 
     //Chamar a função que envia para o serial monitor o status das variáveis
-    //StatusDisplay(); //Se quiser visualizar todos os ciclos no serial monitor apague "//" antes da função StatusDisplay
+    //O estado das variáveis. Só são enviados para o serial monitor quando existe uma alteração de posição
+    DisplayStatus();
+
+    //Redefinir as variáveis em função das novas alterações
+    LastPosition = Position;
 
   }
+
+  //Chamar a função que envia para o serial monitor o status das variáveis
+  //StatusDisplay(); //Se quiser visualizar todos os ciclos no serial monitor apague "//" antes da função StatusDisplay
+
+}
