@@ -1,8 +1,10 @@
 
 /* Model Railroad - Hall Effect Position Sensores
 
+    TENTATIVA DE IDENTIFICAR MULTIPLOS COMBOIOS
+    Nesta versão não estão a funcionar os blocos nem multiplos comboios
+
   Identifica a posição e direcção de uma locomotiva e activa as luzes de aviso.
-  Limitada a uma locomotiva
 
   Este Sketch detecta, através de sensores Hall Effect, a passagem de um comboio por um
   determinado ponto na linha e de seguida executa uma série de tarefas.
@@ -12,6 +14,7 @@
 
   - Identifica o sensor que foi activado;
   - Sabe qual a direcção que o comboio leva;
+  - Identifica as possiveis posições seguimntes;
   - Liga os leds vermelhos e desliga os verdes, correspondentes aos blocos que estão em utilização
   - Liga os leds verdes e desliga os vermelhos, correspondentes aos blocos que deixaram de estar em utilização
 
@@ -26,13 +29,16 @@ int HallPin [n_sensor] = {18, 17, 16, 15, 14};     //Definir a que pinos estão 
 int LedGreen [n_sensor] = {4, 5, 6, 7, 8};        //Definir a que pinos estão ligados os leds verdes
 int LedRed [n_sensor] = {9, 10, 11, 12, 13};      //Definir a que pinos estão ligados os leds verdes
 
-int i;
+int i; //Variável utilizada nos loops e if que venham a ser necessário
 
 int HallPinStatus [n_sensor];                     //Variável que conterá o estado de cada um dos sensores após cada ciclo
 int HallId[n_sensor];           //Identificação dos sensores para leitura "Humana"
 
 int Position = 0;       //Variável que conterá o numero dos sensores que foram activados
 int LastPosition = 0;   //Variável que conterá o numero dos sensores que foram activados anteriormente
+int ExpectPosition [3] = {0, 0, 0}; //Variável que conterá o ID dos sensores que poderão ser activados de seguida
+
+int Block = 0;          //Variável que conterá o bloco que está ocupado. Bloco é o espaço entre 2 sensores
 
 int Direction = 0;      //Indica qual a direcção. Sentido ascendente (2) Sentido descendente (1)
 
@@ -69,27 +75,31 @@ void loop() {
   //Determinar qual o sensor que foi activado e executar a respectiva função.
   for (i = 0; i < n_sensor; i++) {
     if (HallPinStatus[i] == LOW) {
-      SensorExecute();
       Position = i + 1;
+      SensorExecute();
+      DirectionStatus(); //Função que determina a direcção seguida
+      ExpectPositionStatus(); //Saber qual é a próxima posição esperada.
+
+      //Estabelecer se houve alteração de posição. Se sim gravar a nova posição,
+      if (Position != LastPosition) {
+
+        //Chamar a função que envia para o serial monitor o status das variáveis
+        //O estado das variáveis. Só são enviados para o serial monitor quando existe uma alteração de posição
+        DisplayStatus();
+
+        LastPosition = Position; //Gravar a última posição detectada
+      }
     }
   }
 
-  //Função que determina a direcção seguida
-  DirectionStatus();
 
-  //Estabelecer e manter a ultima posição conhecida
-  if (Position != LastPosition) {
-
-    //Chamar a função que envia para o serial monitor o status das variáveis
-    //O estado das variáveis. Só são enviados para o serial monitor quando existe uma alteração de posição
-    DisplayStatus();
-
-    //Redefinir as variáveis em função das novas alterações
-    LastPosition = Position;
-
-  }
 
   //Chamar a função que envia para o serial monitor o status das variáveis
   //StatusDisplay(); //Se quiser visualizar todos os ciclos no serial monitor apague "//" antes da função StatusDisplay
 
+
 }
+
+
+
+
