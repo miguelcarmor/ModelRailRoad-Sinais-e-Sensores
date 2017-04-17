@@ -6,6 +6,8 @@
       - SensorStatus() Função que envia para o serial monitor a condição dos sensores
       - SensorExecute() Função que executa as tarefas de cada um dos sensores
       - DirectionStatus() Função que determina a direcção seguida
+      - ExpectPositionStatus() Função que estabelece  qual a posição expectável do próximo sensor
+
 
 */
 
@@ -25,6 +27,11 @@ void DisplayStatus() {
   Serial.print(" - Direction: ");
   Serial.print(Direction);
 
+  Serial.print(" - Expect: ");
+  Serial.print(ExpectPosition[0]);
+  Serial.print(ExpectPosition[1]);
+  Serial.println(ExpectPosition[2]);
+
   Serial.println("");
   Serial.println("");
 
@@ -40,10 +47,10 @@ void SensorStatus()
 }
 
 //Função que executa as tarefas de cada um dos sensores
+//Para já só liga e desliga os LEDs verdes e vermelhos consoante o sensor que foi activado
 void SensorExecute()
 {
   if (Position > 1 && Position <= n_sensor - 2) {
-    //Desliga os LEDs verdes no bloco que foi accionado bem como do bloco seguinte
 
     digitalWrite(LedGreen[Position - 2], HIGH);
     digitalWrite(LedRed[Position - 2], LOW);
@@ -56,9 +63,6 @@ void SensorExecute()
 
     digitalWrite(LedGreen[Position + 1], HIGH);
     digitalWrite(LedRed[Position + 1], LOW);
-
-
-
   }
 
   else if (Position == 1) {
@@ -74,7 +78,6 @@ void SensorExecute()
 
     digitalWrite(LedGreen[Position + 1], HIGH);
     digitalWrite(LedRed[Position + 1], LOW);
-
   }
 
   else if (Position == n_sensor - 1 ) {
@@ -90,7 +93,6 @@ void SensorExecute()
 
     digitalWrite(LedGreen[Position - n_sensor + 1], HIGH);
     digitalWrite(LedRed[Position - n_sensor + 1], LOW);
-
   }
 
   else if (Position == n_sensor ) {
@@ -109,13 +111,10 @@ void SensorExecute()
 
     digitalWrite(LedGreen[Position - n_sensor + 1 ], HIGH);
     digitalWrite(LedRed[Position - n_sensor + 1 ], LOW);
-
-
   }
-
 }
 
-//Função que determina a direcção seguida
+//Função que determina a direcção seguida. Baseada na última posição conhecia e pela posição actual
 
 void DirectionStatus() {
   if (Position == 1 && LastPosition == n_sensor) {
@@ -132,5 +131,32 @@ void DirectionStatus() {
   }
   else {
     Direction = 0;
+  }
+}
+
+//Estabelecer e manter a posição expectável do próximo sensor
+//Se passou pelo sensor 2 então as posições esperadas são 1, 2 e 3.
+//Fora deste espectrum é porque se trata de outra composição
+
+void ExpectPositionStatus() {
+   if (Position == 0) {
+    ExpectPosition [0] = 0;
+    ExpectPosition [1] = 0;
+    ExpectPosition [2] = 0;
+  }
+  else if (Position == 1) {
+    ExpectPosition [0] = n_sensor;
+    ExpectPosition [1] = Position;
+    ExpectPosition [2] = Position + 1;
+  }
+  else if (Position == n_sensor) {
+    ExpectPosition [0] = Position - 1;
+    ExpectPosition [1] = Position;
+    ExpectPosition [2] = 1;
+  }
+  else {
+    ExpectPosition [0] = Position - 1;
+    ExpectPosition [1] = Position;
+    ExpectPosition [2] = Position + 1;
   }
 }
